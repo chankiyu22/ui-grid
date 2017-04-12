@@ -42,6 +42,15 @@
             return grid.$headerContainer.scrollLeft(newLeft);
         });
 
+        var containerResizeDereg = null;
+        if (grid.config.autoResizeContainer) {
+            containerResizeDereg = $scope.$watch(function () {
+                return grid.$canvas.height();
+            }, function (newHeight) {
+                return grid.$viewport.css('minHeight', newHeight + grid.$headerContainer.height());
+            });
+        }
+
         $scope.$on('$destroy', function() {
             // Remove all references to DOM elements, otherwise we get memory leaks
             if(grid.$root) {
@@ -58,6 +67,9 @@
             }
 
             scopeDereg();
+            if (containerResizeDereg) {
+                containerResizeDereg();
+            }
         });
 
         domUtilityService.UpdateGridLayout($scope, grid);
